@@ -37,7 +37,7 @@ object Versions {
     const val detekt = "1.23.1"
     const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.27.0"
+    const val sentry = "6.30.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -202,7 +202,7 @@ object ComponentsDependencies {
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
-    const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
+    const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
 
