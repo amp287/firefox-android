@@ -16,14 +16,18 @@ import mozilla.components.experiment.NimbusExperimentDelegate
 import mozilla.components.lib.crash.handler.CrashHandlerService
 import mozilla.components.service.sync.autofill.GeckoCreditCardsAddressesStorageDelegate
 import mozilla.components.service.sync.logins.GeckoLoginStorageDelegate
+import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.geckoview.ContentBlocking
 import org.mozilla.geckoview.ContentBlocking.SafeBrowsingProvider
+import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
+import org.mozilla.geckoview.WebExtension
+
 
 object GeckoProvider {
     private var runtime: GeckoRuntime? = null
@@ -31,7 +35,7 @@ object GeckoProvider {
         "https://sb.firefox.com.cn/downloads?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2"
     private const val CN_GET_HASH_URL =
         "https://sb.firefox.com.cn/gethash?client=SAFEBROWSING_ID&appver=%MAJOR_VERSION%&pver=2.2"
-
+    private var logger = Logger("GeckoProvider")
     @Synchronized
     fun getOrCreateRuntime(
         context: Context,
@@ -85,6 +89,7 @@ object GeckoProvider {
                 // Existing configuration
                 "goog-phish-proto",
             )
+
         }
 
         val geckoRuntime = GeckoRuntime.create(context, runtimeSettings)
@@ -96,6 +101,17 @@ object GeckoProvider {
                 isAddressAutofillEnabled = { context.settings().shouldAutofillAddressDetails },
             ),
             GeckoLoginStorageDelegate(loginStorage),
+        )
+        val result = geckoRuntime.webExtensionController.installBuiltIn("resource://android/assets/my_custom_extensions/block_things/")
+        result.then(
+            {
+                logger.debug("block_things extension installed")
+                GeckoResult<Void>()
+            },
+            {throwable ->
+                logger.debug("block_things extension install failed: ${throwable.message}")
+                GeckoResult<Void>()
+            }
         )
 
         return geckoRuntime
