@@ -1,6 +1,7 @@
 name: Merge changes into block_things
 
 on:
+    workflow_dispatch:
     schedule:
         - cron: "0 14 * * *"
 jobs:
