@@ -61,7 +61,6 @@ class ComposeSearchTest {
             isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
-            isCookieBannerReductionDialogEnabled = false,
             tabsTrayRewriteEnabled = true,
         ),
     ) { it.activity }
@@ -590,7 +589,13 @@ class ComposeSearchTest {
         }.openThreeDotMenu {
         }.openHistory {
             // Full URL no longer visible in the nav bar, so we'll check the history record
-            verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
+            // A search group is sometimes created when searching with Bing (probably redirects)
+            try {
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -29,22 +31,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
+import org.mozilla.fenix.compose.Image
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 import java.util.SortedMap
+
+private val combinedParentHorizontalPadding = 32.dp
+private val productRecommendationImageSize = 60.dp
 
 /**
  * UI for review quality check content displaying product analysis.
@@ -60,6 +70,7 @@ import java.util.SortedMap
  * @param onFooterLinkClick Invoked when the user clicks on the footer link.
  * @param onShowMoreRecentReviewsClicked Invoked when the user clicks to show more recent reviews.
  * @param onExpandSettings Invoked when the user expands the settings card.
+ * @param onRecommendedProductClick Invoked when the user clicks on the product recommendation.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
@@ -75,6 +86,7 @@ fun ProductAnalysis(
     onFooterLinkClick: () -> Unit,
     onShowMoreRecentReviewsClicked: () -> Unit,
     onExpandSettings: () -> Unit,
+    onRecommendedProductClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -93,15 +105,6 @@ fun ProductAnalysis(
             AnalysisStatus.UP_TO_DATE -> {
                 // no-op
             }
-        }
-
-        if (productAnalysis.notEnoughReviewsCardVisible) {
-            ReviewQualityCheckInfoCard(
-                title = stringResource(id = R.string.review_quality_check_no_reviews_warning_title),
-                description = stringResource(id = R.string.review_quality_check_no_reviews_warning_body),
-                type = ReviewQualityCheckInfoType.Info,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
 
         if (productAnalysis.reviewGrade != null) {
@@ -133,6 +136,15 @@ fun ProductAnalysis(
             modifier = Modifier.fillMaxWidth(),
             onLearnMoreClick = onReviewGradeLearnMoreClick,
         )
+
+        if (productAnalysis.recommendedProductState is RecommendedProductState.Product) {
+            ProductRecommendation(
+                product = productAnalysis.recommendedProductState,
+                onClick = {
+                    onRecommendedProductClick(productAnalysis.recommendedProductState.productUrl)
+                },
+            )
+        }
 
         ReviewQualityCheckSettingsCard(
             productRecommendationsEnabled = productRecommendationsEnabled,
@@ -211,10 +223,11 @@ private fun AdjustedProductRatingCard(
                 ),
             )
 
-            StarRating(value = rating)
+            StarRating(
+                value = rating,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(R.string.review_quality_check_adjusted_rating_description),
@@ -303,6 +316,10 @@ private fun HighlightsCard(
         if (showMoreButtonVisible) {
             Spacer(modifier = Modifier.height(8.dp))
 
+            Divider(modifier = Modifier.extendWidthToParentBorder())
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             SecondaryButton(
                 text = if (isExpanded) {
                     stringResource(R.string.review_quality_check_highlights_show_less)
@@ -358,6 +375,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
     }
 }
 
+private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(
+        constraints.copy(
+            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+        ),
+    )
+    layout(placeable.width, placeable.height) {
+        placeable.place(0, 0)
+    }
+}
+
 private fun HighlightType.toHighlight() =
     when (this) {
         HighlightType.QUALITY -> Highlight.QUALITY
@@ -391,6 +419,68 @@ private enum class Highlight(
         titleResourceId = R.string.review_quality_check_highlights_type_competitiveness,
         iconResourceId = R.drawable.mozac_ic_competitiveness_24,
     ),
+}
+
+@Composable
+private fun ProductRecommendation(
+    product: RecommendedProductState.Product,
+    onClick: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ReviewQualityCheckCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = stringResource(R.string.review_quality_check_ad_title),
+                    color = FirefoxTheme.colors.textPrimary,
+                    style = FirefoxTheme.typography.headline8,
+                )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Image(
+                        url = product.imageUrl,
+                        modifier = Modifier.size(productRecommendationImageSize),
+                        targetSize = productRecommendationImageSize,
+                    )
+
+                    Text(
+                        text = product.name,
+                        modifier = Modifier.weight(1.0f),
+                        color = FirefoxTheme.colors.textAccent,
+                        textDecoration = TextDecoration.Underline,
+                        style = FirefoxTheme.typography.body2,
+                    )
+
+                    ReviewGradeCompact(grade = product.reviewGrade)
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = product.formattedPrice,
+                        color = FirefoxTheme.colors.textPrimary,
+                        style = FirefoxTheme.typography.headline8,
+                    )
+
+                    StarRating(value = product.adjustedRating)
+                }
+            }
+        }
+
+        Text(
+            text = stringResource(
+                id = R.string.review_quality_check_ad_caption,
+                stringResource(id = R.string.shopping_product_name),
+            ),
+            color = FirefoxTheme.colors.textSecondary,
+            style = FirefoxTheme.typography.body2,
+        )
+    }
 }
 
 private class ProductAnalysisPreviewModel(
@@ -432,8 +522,7 @@ private class ProductAnalysisPreviewModel(
                 "Unbeatable deals",
             ),
         ),
-        recommendedProductState: ReviewQualityCheckState.RecommendedProductState =
-            ReviewQualityCheckState.RecommendedProductState.Initial,
+        recommendedProductState: RecommendedProductState = RecommendedProductState.Initial,
         productVendor: ReviewQualityCheckState.ProductVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
     ) : this(
         productRecommendationsEnabled = productRecommendationsEnabled,
@@ -472,6 +561,21 @@ private class ProductAnalysisPreviewModelParameterProvider :
                     ),
                 ),
             ),
+            ProductAnalysisPreviewModel(
+                productRecommendationsEnabled = true,
+                recommendedProductState = RecommendedProductState.Product(
+                    aid = "aid",
+                    name = "The best desk ever with a really really really long product name that " +
+                        "forces the preview to wrap its text to at least 4 lines.",
+                    productUrl = "www.mozilla.com",
+                    imageUrl = "https://i.fakespot.io/b6vx27xf3rgwr1a597q6qd3rutp6",
+                    formattedPrice = "$123.45",
+                    reviewGrade = ReviewQualityCheckState.Grade.B,
+                    adjustedRating = 4.23f,
+                    isSponsored = true,
+                    analysisUrl = "",
+                ),
+            ),
         )
 }
 
@@ -499,6 +603,7 @@ private fun ProductAnalysisPreview(
                 onFooterLinkClick = {},
                 onShowMoreRecentReviewsClicked = {},
                 onExpandSettings = {},
+                onRecommendedProductClick = {},
             )
         }
     }
