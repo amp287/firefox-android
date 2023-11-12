@@ -16,7 +16,11 @@ function removeImagesAndVideos() {
   function exponentialTimer(func, delay, maxDelay) {
     removeImagesAndVideos();
 
-    if (delay < maxDelay) {
+    if (delay > maxDelay){
+      setTimeout(function() {
+        removeImagesAndVideos();
+      }, maxDelay);
+    }else {
       setTimeout(function() {
         exponentialTimer(func, delay * 2, maxDelay);
       }, delay);

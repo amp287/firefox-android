@@ -10,7 +10,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     return {cancel: true};
   },
-  {urls: ["<all_urls>"], types: ["image", "video", "media", "image/gif", "gif", "png", "jpeg", "x-mpegurl", "mpt2"]},
+  {urls: ["<all_urls>"], types: ["image", "media", "imageset"]},
   ["blocking"]
 );
 
@@ -18,7 +18,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function(details) { 
         return {cancel: true};
     },
-    {urls: ["*://*.google.com/*?*tbm=isch*"]},
+    {urls: ["*://*.google.com/*?*tbm=isch*", "*://*.youtube.com/*"]},
     ["blocking"]
 )
 
@@ -27,6 +27,6 @@ chrome.webRequest.onHeadersReceived.addListener(
         console.log("muffalo");
         return {cancel: true};
     },
-    {urls: ["<all_urls>"], types: ["image", "video", "media", "image/webp"]},
+    {urls: ["<all_urls>"], types: ["image", "video", "imageset"]},
     ["blocking"]
 )
