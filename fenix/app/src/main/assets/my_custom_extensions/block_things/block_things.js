@@ -1,10 +1,9 @@
 chrome.webRequest.onBeforeRequest.addListener(
   function(details) {
 
-   /*if(details.url.contains("genesys.okta.com")) {
-        console.log("Muffalo");
+   if(details.url.includes("jackbox")) {
         return {cancel: false};
-    }  */
+    }
 
     console.log("Buffalo");
 
@@ -24,7 +23,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 chrome.webRequest.onHeadersReceived.addListener(
     function(details) {
-        console.log("muffalo");
+
+        if(details.url.includes("jackbox")) {
+            return {cancel: false};
+        }
+
         return {cancel: true};
     },
     {urls: ["<all_urls>"], types: ["image", "video", "imageset"]},
