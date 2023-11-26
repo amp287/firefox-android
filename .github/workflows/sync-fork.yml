@@ -3,7 +3,7 @@ name: Merge changes into block_things
 on:
     workflow_dispatch:
     schedule:
-        - cron: "0 14 * * *"
+        - cron: "0 14 * * 0"
 jobs:
     update_branch:
         runs-on: ubuntu-latest
