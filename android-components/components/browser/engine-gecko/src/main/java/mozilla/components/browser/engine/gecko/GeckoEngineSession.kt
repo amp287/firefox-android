@@ -888,6 +888,34 @@ class GeckoEngineSession(
     }
 
     /**
+     * See [EngineSession.reportBackInStock]
+     */
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.reportBackInStock(url).then({
+                response ->
+            val errorMessage = "Invalid value: unable to report back in stock from Gecko Engine."
+            if (response == null) {
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<String>()
+        }, {
+                throwable ->
+            logger.error("Request for reporting back in stock failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
      * Convenience method for the error when session translation is not available.
      */
     private fun sessionTranslationNotAvailable(): Throwable {
@@ -1755,7 +1783,7 @@ class GeckoEngineSession(
         internal const val ABOUT_BLANK = "about:blank"
         internal const val JS_SCHEME = "javascript"
         internal val BLOCKED_SCHEMES =
-            listOf("content", "file", "resource", JS_SCHEME) // See 1684761 and 1684947
+            listOf("file", "resource", JS_SCHEME) // See 1684761 and 1684947
 
         /**
          * Provides an ErrorType corresponding to the error code provided.
