@@ -25,6 +25,7 @@ object Versions {
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
+    const val okio = "3.6.0"
     const val coil = "2.4.0"
 
     const val android_gradle_plugin = "8.0.2"
@@ -43,7 +44,7 @@ object Versions {
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "55.0.0"
+    const val mozilla_glean = "56.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -56,7 +57,7 @@ object Versions {
 
     object AndroidX {
         const val activityCompose = "1.7.2"
-        const val annotation = "1.7.0"
+        const val annotation = "1.7.1"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
         const val browser = "1.7.0"
@@ -200,6 +201,7 @@ object ComponentsDependencies {
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
+    const val thirdparty_okio = "com.squareup.okio:okio:${Versions.okio}"
     const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
