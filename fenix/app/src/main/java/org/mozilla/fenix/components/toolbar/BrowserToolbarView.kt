@@ -19,20 +19,21 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.CustomTabSessionState
 import mozilla.components.browser.state.state.ExternalAppType
 import mozilla.components.browser.toolbar.BrowserToolbar
-import mozilla.components.browser.toolbar.behavior.BrowserToolbarBehavior
 import mozilla.components.browser.toolbar.display.DisplayToolbar
 import mozilla.components.support.ktx.util.URLStringUtils
+import mozilla.components.ui.widgets.behavior.EngineViewScrollingBehavior
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.customtabs.CustomTabToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.ToolbarPopupWindow
 import java.lang.ref.WeakReference
-import mozilla.components.browser.toolbar.behavior.ToolbarPosition as MozacToolbarPosition
+import mozilla.components.ui.widgets.behavior.ViewPosition as MozacToolbarPosition
 
 @SuppressWarnings("LargeClass")
 class BrowserToolbarView(
@@ -53,11 +54,11 @@ class BrowserToolbarView(
     private val layout = LayoutInflater.from(context)
         .inflate(toolbarLayout, container, true)
 
-    @VisibleForTesting
-    internal var view: BrowserToolbar = layout
+    var view: BrowserToolbar = layout
         .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
+    val menuToolbar: ToolbarMenu
 
     @VisibleForTesting
     internal val isPwaTabOrTwaTab: Boolean
@@ -130,7 +131,6 @@ class BrowserToolbarView(
                 display.hint = context.getString(R.string.search_hint)
             }
 
-            val menuToolbar: ToolbarMenu
             if (isCustomTabSession) {
                 menuToolbar = CustomTabToolbarMenu(
                     context = this,
@@ -171,6 +171,8 @@ class BrowserToolbarView(
                     isPrivate = customTabSession.content.private,
                 )
             } else {
+                val isNavBarEnabled = IncompleteRedesignToolbarFeature(context.settings()).isEnabled
+
                 DefaultToolbarIntegration(
                     this,
                     view,
@@ -178,6 +180,7 @@ class BrowserToolbarView(
                     lifecycleOwner,
                     sessionId = null,
                     isPrivate = components.core.store.state.selectedTab?.content?.private ?: false,
+                    isNavBarEnabled = isNavBarEnabled,
                     interactor = interactor,
                 )
             }
@@ -191,7 +194,7 @@ class BrowserToolbarView(
         }
 
         (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
-            (behavior as? BrowserToolbarBehavior)?.forceExpand(view)
+            (behavior as? EngineViewScrollingBehavior)?.forceExpand(view)
         }
     }
 
@@ -202,7 +205,7 @@ class BrowserToolbarView(
         }
 
         (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
-            (behavior as? BrowserToolbarBehavior)?.forceCollapse(view)
+            (behavior as? EngineViewScrollingBehavior)?.forceCollapse(view)
         }
     }
 
@@ -255,7 +258,7 @@ class BrowserToolbarView(
     @VisibleForTesting
     internal fun setDynamicToolbarBehavior(toolbarPosition: MozacToolbarPosition) {
         (view.layoutParams as? CoordinatorLayout.LayoutParams)?.apply {
-            behavior = BrowserToolbarBehavior(view.context, null, toolbarPosition)
+            behavior = EngineViewScrollingBehavior(view.context, null, toolbarPosition)
         }
     }
 
