@@ -29,6 +29,7 @@ import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.SwitchWithLabel
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.list.TextListItem
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.FirefoxTheme
 import java.util.Locale
 
@@ -51,17 +52,30 @@ fun TranslationOptionsDialog(
 
     LazyColumn {
         items(translationOptionsList) { item: TranslationSwitchItem ->
-            TranslationOptions(translationSwitchItem = item)
+            val translationSwitchItem = TranslationSwitchItem(
+                type = item.type,
+                textLabel = item.textLabel,
+                isChecked = item.isChecked,
+                isEnabled = item.isEnabled,
+                onStateChange = { translationPageSettingsOption, checked ->
+                    item.onStateChange.invoke(translationPageSettingsOption, checked)
+                },
+            )
+            TranslationOptions(
+                translationSwitchItem = translationSwitchItem,
+            )
         }
 
-        item {
-            TextListItem(
-                label = stringResource(id = R.string.translation_option_bottom_sheet_translation_settings),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 56.dp),
-                onClick = { onTranslationSettingsClicked() },
-            )
+        if (FxNimbus.features.translations.value().globalSettingsEnabled) {
+            item {
+                TextListItem(
+                    label = stringResource(id = R.string.translation_option_bottom_sheet_translation_settings),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 56.dp),
+                    onClick = { onTranslationSettingsClicked() },
+                )
+            }
         }
 
         item {
@@ -80,16 +94,32 @@ fun TranslationOptionsDialog(
 }
 
 @Composable
-private fun TranslationOptions(translationSwitchItem: TranslationSwitchItem) {
+private fun TranslationOptions(
+    translationSwitchItem: TranslationSwitchItem,
+) {
     SwitchWithLabel(
-        checked = translationSwitchItem.isChecked,
-        onCheckedChange = translationSwitchItem.onStateChange,
         label = translationSwitchItem.textLabel,
-        modifier = Modifier
-            .padding(start = 72.dp, end = 16.dp),
+        description = if (translationSwitchItem.isChecked) {
+            translationSwitchItem.type.descriptionId?.let {
+                stringResource(
+                    id = it,
+                )
+            }
+        } else {
+            null
+        },
+        enabled = translationSwitchItem.isEnabled,
+        checked = translationSwitchItem.isChecked,
+        onCheckedChange = { checked ->
+            translationSwitchItem.onStateChange.invoke(
+                translationSwitchItem.type,
+                checked,
+            )
+        },
+        modifier = Modifier.padding(start = 72.dp, end = 16.dp),
     )
 
-    if (translationSwitchItem.hasDivider) {
+    if (translationSwitchItem.type.hasDivider) {
         Divider(Modifier.padding(top = 4.dp, bottom = 4.dp))
     }
 }
@@ -106,8 +136,7 @@ private fun TranslationOptionsDialogHeader(
     ) {
         IconButton(
             onClick = { onBackClicked() },
-            modifier = Modifier
-                .size(24.dp),
+            modifier = Modifier.size(24.dp),
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.mozac_ic_back_24),
@@ -137,40 +166,44 @@ fun getTranslationOptionsList(): List<TranslationSwitchItem> {
     return mutableListOf<TranslationSwitchItem>().apply {
         add(
             TranslationSwitchItem(
+                type = TranslationPageSettingsOption.AlwaysOfferPopup(),
                 textLabel = stringResource(R.string.translation_option_bottom_sheet_always_translate),
                 isChecked = false,
-                hasDivider = true,
-                onStateChange = {},
+                isEnabled = true,
+                onStateChange = { _, _ -> },
             ),
         )
         add(
             TranslationSwitchItem(
+                type = TranslationPageSettingsOption.AlwaysTranslateLanguage(),
                 textLabel = stringResource(
                     id = R.string.translation_option_bottom_sheet_always_translate_in_language,
                     formatArgs = arrayOf(Locale("es").displayName),
                 ),
                 isChecked = false,
-                hasDivider = false,
-                onStateChange = {},
+                isEnabled = true,
+                onStateChange = { _, _ -> },
             ),
         )
         add(
             TranslationSwitchItem(
+                type = TranslationPageSettingsOption.NeverTranslateLanguage(),
                 textLabel = stringResource(
                     id = R.string.translation_option_bottom_sheet_never_translate_in_language,
                     formatArgs = arrayOf(Locale("es").displayName),
                 ),
                 isChecked = true,
-                hasDivider = true,
-                onStateChange = {},
+                isEnabled = true,
+                onStateChange = { _, _ -> },
             ),
         )
         add(
             TranslationSwitchItem(
+                type = TranslationPageSettingsOption.NeverTranslateSite(),
                 textLabel = stringResource(R.string.translation_option_bottom_sheet_never_translate_site),
                 isChecked = true,
-                hasDivider = true,
-                onStateChange = {},
+                isEnabled = true,
+                onStateChange = { _, _ -> },
             ),
         )
     }

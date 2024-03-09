@@ -18,7 +18,6 @@
     <string name="pref_key_advanced" translatable="false">pref_key_advanced</string>
     <string name="pref_key_language" translatable="false">pref_key_language</string>
     <string name="pref_key_data_choices" translatable="false">pref_key_data_choices</string>
-    <string name="pref_key_privacy_link" translatable="false">pref_key_privacy_link</string>
     <string name="pref_key_delete_browsing_data" translatable="false">pref_key_delete_browsing_data</string>
     <string name="pref_key_delete_browsing_data_on_quit_preference" translatable="false">pref_key_delete_browsing_data_on_quit_preference</string>
     <string name="pref_key_notifications" translatable="false">pref_key_notifications</string>
@@ -42,10 +41,8 @@
     <string name="pref_key_override_amo_user" translatable="false">pref_key_override_amo_user</string>
     <string name="pref_key_override_amo_collection" translatable="false">pref_key_override_amo_collection</string>
     <string name="pref_key_enable_gecko_logs" translatable="false">pref_key_enable_gecko_logs</string>
-    <string name="pref_key_help" translatable="false">pref_key_help</string>
     <string name="pref_key_rate" translatable="false">pref_key_rate</string>
     <string name="pref_key_about" translatable="false">pref_key_about</string>
-    <string name="pref_key_your_rights" translatable="false">pref_key_your_rights</string>
     <string name="pref_key_account" translatable="false">pref_key_account</string>
     <string name="pref_key_sign_in" translatable="false">pref_key_sign_in</string>
     <string name="pref_key_account_auth_error" translatable="false">pref_key_account_auth_error</string>
@@ -81,6 +78,7 @@
     <string name="pref_key_enable_suggest_strong_password" translatable="false">pref_key_suggest_strong_password_enabled</string>
     <string name="pref_key_enable_debug_drawer" translatable="false">pref_key_enable_debug_drawer</string>
     <string name="pref_key_show_first_time_translation" translatable="false">pref_key_show_first_time_translation</string>
+    <string name="pref_key_enable_tab_strip" translatable="false">pref_key_enable_tab_strip</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -148,6 +146,9 @@
     <!-- Privacy Pop Window -->
     <string name="pref_key_privacy_pop_window" translatable="false">pref_key_privacy_pop_window</string>
 
+    <!-- Remote Server Settings -->
+    <string name="pref_key_remote_server_prod" translatable="false">pref_key_remote_server_prod</string>
+
     <!-- Theme Settings -->
     <string name="pref_key_light_theme" translatable="false">pref_key_light_theme</string>
     <string name="pref_key_dark_theme" translatable="false">pref_key_dark_theme</string>
@@ -155,12 +156,14 @@
     <string name="pref_key_follow_device_theme" translatable="false">pref_key_follow_device_theme</string>
 
     <!-- Customization Settings -->
+    <string name="pref_key_customization_preference_screen" translatable="false">pref_key_customization_preference_screen</string>
     <string name="pref_key_website_pull_to_refresh" translatable="false">pref_key_website_pull_to_refresh</string>
     <string name="pref_key_dynamic_toolbar" translatable="false">pref_key_dynamic_toolbar</string>
     <string name="pref_key_swipe_toolbar_switch_tabs" translatable="false">pref_key_swipe_toolbar_switch_tabs</string>
     <string name="pref_key_swipe_toolbar_show_tabs" translatable="false">pref_key_swipe_toolbar_show_tabs</string>
     <string name="pref_key_recent_tabs" translatable="false">pref_key_recent_tabs</string>
     <string name="pref_key_recent_bookmarks" translatable="false">pref_key_recent_bookmarks</string>
+    <string name="pref_key_customization_category_toolbar" translatable="false">pref_key_customization_category_toolbar</string>
 
     <!-- HTTPS Only Settings -->
     <string name="pref_key_https_only_settings" translatable="false">pref_key_https_only_settings</string>
@@ -204,7 +207,7 @@
     <string name="pref_key_credit_cards_save_and_autofill_cards" translatable="false">pref_key_credit_cards_save_and_autofill_cards</string>
     <!-- Key for the "Sync cards across devices" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_sync_cards_across_devices" translatable="false">pref_key_credit_cards_sync_cards_across_devices</string>
-    <!-- Key for the "Manage saved cards" preference in the "Autofill" fragment -->
+    <!-- Key for the "Manage cards" preference in the "Autofill" fragment -->
     <string name="pref_key_credit_cards_manage_cards" translatable="false">pref_key_credit_cards_manage_cards</string>
     <!-- Key for the "Manage addresses" preference in the "Autofill" fragment -->
     <string name="pref_key_addresses_manage_addresses" translatable="false">pref_key_addresses_manage_addresses</string>
@@ -376,10 +379,6 @@
     <string name="pref_key_growth_usage_time_sent" translatable="false">pref_key_growth_usage_time_sent</string>
     <string name="pref_key_growth_resume_last_sent" translatable="false">pref_key_growth_last_resumed</string>
     <string name="pref_key_growth_uri_load_last_sent" translatable="false">pref_key_growth_uri_load_last_sent</string>
-
-    <!-- Notification Pre Permission Prompt -->
-    <string name="pref_key_notification_pre_permission_prompt_enabled">pref_key_notification_pre_permission_prompt_enabled</string>
-    <string name="pref_key_is_notification_pre_permission_prompt_shown">pref_key_is_notification_pre_permission_prompt_shown</string>
 
     <!--Shopping -->
     <string name="pref_key_is_review_quality_check_enabled">pref_key_is_review_quality_check_enabled</string>

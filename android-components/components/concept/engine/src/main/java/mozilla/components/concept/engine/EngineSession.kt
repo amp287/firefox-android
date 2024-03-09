@@ -48,7 +48,7 @@ abstract class EngineSession(
          */
         fun onScrollChange(scrollX: Int, scrollY: Int) = Unit
 
-        fun onLocationChange(url: String) = Unit
+        fun onLocationChange(url: String, hasUserGesture: Boolean) = Unit
         fun onTitleChange(title: String) = Unit
 
         /**
@@ -964,6 +964,18 @@ abstract class EngineSession(
      * @param onException callback invoked if there was an error getting the response.
      */
     abstract fun sendImpressionAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Sends a placement attribution event for a given product aid.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun sendPlacementAttributionEvent(
         aid: String,
         onResult: (Boolean) -> Unit,
         onException: (Throwable) -> Unit,
