@@ -109,6 +109,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     toolbarLayout = browserToolbarView.view,
                     store = components.core.store,
                     selectTabUseCase = components.useCases.tabsUseCases.selectTab,
+                    onSwipeStarted = {
+                        thumbnailsFeature.get()?.requestScreenshot()
+                    },
                 ),
             )
         }
@@ -311,7 +314,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             context.components.core.store.state.translationEngine.isEngineSupported
 
         if (isEngineSupported != true ||
-            !context.settings().enableTranslations ||
             !FxNimbus.features.translations.value().mainFlowToolbarEnabled
         ) {
             return
